@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Roteiro EUA</title>
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root{
+      --bg:#07111f;--card:rgba(10,19,34,.85);--muted:#cbd5e1;--accent:#22c55e;--blue:#2563eb;
+      --line:rgba(255,255,255,.1)
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh;color:#fff;
+      background-image:linear-gradient(rgba(2,6,23,.58),rgba(2,6,23,.92)),url('https://images.unsplash.com/photo-1502920917128-1aa500764ce7?auto=format&fit=crop&w=1600&q=80');
+      background-size:cover;background-position:center;background-attachment:fixed
+    }
+    .wrap{max-width:820px;margin:0 auto;padding:16px}
+    .hero{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .badge{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:26px;background:rgba(15,23,42,.7);border:1px solid rgba(255,255,255,.12)}
+    h1{margin:0;font-size:30px}
+    .summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;backdrop-filter:blur(8px)}
+    .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+    .value{font-size:18px;font-weight:700}
+    .progress{margin:10px 0}
+    .bar{height:10px;border-radius:999px;background:rgba(255,255,255,.2);overflow:hidden}
+    .fill{height:100%;background:linear-gradient(90deg,#22c55e,#86efac);width:0%}
+    .tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+    .tab{padding:10px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff}
+    .tab.active{background:linear-gradient(135deg,#2563eb,#1d4ed8)}
+    .list{display:grid;gap:10px}
+    .row{display:flex;justify-content:space-between;gap:10px}
+    .left{display:flex;gap:10px;flex:1}
+    .seq{min-width:36px;height:36px;border-radius:999px;display:grid;place-items:center;font-weight:700;background:linear-gradient(135deg,#16a34a,#22c55e)}
+    .muted{color:var(--muted);font-size:12px}
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+    .tag{font-size:12px;padding:5px 8px;border-radius:999px;background:rgba(59,130,246,.2);border:1px solid rgba(96,165,250,.3)}
+    .btn{border:none;border-radius:12px;padding:10px 12px;background:var(--accent);color:#052e16;font-weight:700;cursor:pointer}
+    .btn.secondary{background:#2563eb;color:#fff}
+    .simple{display:flex;justify-content:space-between;align-items:center;gap:10px}
+    .check{display:flex;gap:10px;align-items:center}
+    textarea{width:100%;min-height:200px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.08);color:#fff;padding:12px}
+    .substeps{margin:10px 0 0 0;padding-left:18px}
+    .substeps li{margin:4px 0;color:#e2e8f0}
+    .trip-card.done-card{opacity:.72}
+    .trip-card.done-card h3,
+    .trip-card.done-card .muted,
+    .trip-card.done-card .tag,
+    .trip-card.done-card li{ text-decoration:line-through; }
+    .top-actions{display:flex;gap:10px;justify-content:flex-end;margin:10px 0}
+    .finance-links a{display:block;color:#93c5fd;text-decoration:none;padding:8px 0;border-top:1px solid var(--line)}
+    .finance-links a:first-child{border-top:none}
+    @media(max-width:640px){
+      .summary{grid-template-columns:1fr 1fr}
+      .tabs{grid-template-columns:repeat(2,1fr)}
+      .row,.simple{flex-direction:column;align-items:flex-start}
+      .top-actions{justify-content:stretch;flex-direction:column}
+      .btn,.btn.secondary{width:100%}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="hero">
+      <div class="badge">🇺🇸</div>
+      <div>
+        <h1>Roteiro EUA</h1>
+        <div class="muted">Tampa • Miami • Sarasota • Orlando</div>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button id="installBtn" class="btn secondary" style="display:none">Baixar / Instalar app</button>
+      <button id="exportBtn" class="btn secondary">Baixar dados</button>
+    </div>
+
+    <div class="summary">
+      <div class="card"><div class="label">Período</div><div class="value">18–26/05</div></div>
+      <div class="card"><div class="label">Progresso</div><div id="pval" class="value">0%</div></div>
+      <div class="card"><div class="label">Total (R$)</div><div id="tval" class="value">R$ 0</div></div>
+      <div class="card"><div class="label">Base</div><div class="value">Plano simples</div></div>
+    </div>
+
+    <div class="card progress">
+      <div class="row"><span>Progresso da viagem</span><strong id="pval2">0%</strong></div>
+      <div class="bar"><div id="pbar" class="fill"></div></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="roteiro">Roteiro</button>
+      <button class="tab" data-tab="financeiro">Financeiro</button>
+      <button class="tab" data-tab="checklist">Checklist</button>
+      <button class="tab" data-tab="compras">Compras</button>
+      <button class="tab" data-tab="notas">Notas</button>
+    </div>
+
+    <div id="roteiro" class="list"></div>
+    <div id="financeiro" class="list" style="display:none"></div>
+    <div id="checklist" class="list" style="display:none"></div>
+    <div id="compras" class="list" style="display:none"></div>
+    <div id="notas" class="list" style="display:none">
+      <textarea id="notes" placeholder="Anotações da viagem..."></textarea>
+    </div>
+  </div>
+
+  <script>
+    const KEY = 'roteiro-eua-simples-v2';
+    const reservationLinks = [
+      { label: 'Seq 1 – Airbnb Sarasota', url: 'https://www.airbnb.com.br/rooms/1629196636951537458' },
+      { label: 'Seq 2 e 3 – Miami Vive Zen', url: 'https://www.booking.com/Share-zGovQK' },
+      { label: 'Seq 4, 5 e 6 – Quality Inn Bradenton', url: 'https://www.booking.com/hotel/us/quality-inn-north-bradenton.html' },
+      { label: 'Seq 7, 8 e 9 – Nobile Hotel Orlando', url: 'https://www.booking.com/Share-DZbiSyI' }
+    ];
+
+    const base = {
+      items: [
+        {id:1,date:'18/05',city:'Tampa',activity:'Chegada',stay:'Sarasota',notes:'Airbnb',cost:322,steps:['Chegada','Descanso'],substeps:['Chegada em Tampa','Deslocamento inicial','Check-in','Descanso'],done:false},
+        {id:2,date:'19/05',city:'Miami',activity:'Viagem + passeio',stay:'Vive Zen',notes:'Booking',cost:916,steps:['Viagem','South Beach','Bar'],substeps:['Saída para Miami','South Beach (caminhada)','Ocean Drive','Bar à noite'],done:false},
+        {id:3,date:'20/05',city:'Miami',activity:'Turismo',stay:'Vive Zen',notes:'MLB',cost:null,steps:['Praia','Wynwood','Jogo MLB'],substeps:['Praia pela manhã','Wynwood Walls à tarde','Jogo do Miami Marlins à noite'],done:false},
+        {id:4,date:'21/05',city:'Miami → Sarasota',activity:'Deslocamento',stay:'Bradenton',notes:'Quality Inn',cost:1350,steps:['Bayside','Deslocamento'],substeps:['Bayside Marketplace','Saída de Miami','Check-in em Bradenton'],done:false},
+        {id:5,date:'22/05',city:'Sarasota',activity:'Formatura',stay:'Bradenton',notes:'Evento',cost:null,steps:['Formatura'],substeps:['Preparação','Evento principal','Fotos e comemoração'],done:false},
+        {id:6,date:'23/05',city:'Sarasota',activity:'Praia / descanso',stay:'Bradenton',notes:'Quality Inn',cost:null,steps:['Siesta Key','Jantar'],substeps:['Praia em Siesta Key','Descanso','Jantar leve'],done:false},
+        {id:7,date:'24/05',city:'Sarasota → Orlando',activity:'Deslocamento',stay:'Orlando',notes:'Nobile',cost:773,steps:['Deslocamento','Outlet','International Drive'],substeps:['Saída para Orlando','Outlet (reconhecimento)','Passeio na International Drive'],done:false},
+        {id:8,date:'25/05',city:'Orlando',activity:'Compras / lazer',stay:'Orlando',notes:'Nobile',cost:null,steps:['Outlet','Vineland','Disney Springs'],substeps:['Outlet principal','Vineland Premium Outlets','Disney Springs à noite'],done:false},
+        {id:9,date:'26/05',city:'Orlando → Tampa',activity:'Retorno',stay:'—',notes:'Voo',cost:null,steps:['Saída'],substeps:['Organizar malas','Deslocamento para Tampa','Voo de volta'],done:false}
+      ],
+      checklist: [
+        {id:1,label:'Passaportes/documentos',done:false},
+        {id:2,label:'Reservas salvas',done:false},
+        {id:3,label:'Cartão/câmbio',done:false},
+        {id:4,label:'Mala pronta',done:false}
+      ],
+      shopping: [
+        {id:1,label:'Nike',done:false},
+        {id:2,label:'Adidas',done:false},
+        {id:3,label:'Tommy',done:false},
+        {id:4,label:'Polo',done:false}
+      ],
+      notes: ''
+    };
+
+    const saved = JSON.parse(localStorage.getItem(KEY) || 'null');
+    const state = saved || base;
+    const $ = (s)=>document.querySelector(s);
+    const $$ = (s)=>document.querySelectorAll(s);
+
+    function brl(v){ if(v==null) return '—'; return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+    function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+    function progress(){
+      const total = state.items.length;
+      const done = state.items.filter(i=>i.done).length;
+      return total ? Math.round(done / total * 100) : 0;
+    }
+
+    function total(){ return state.items.reduce((a,i)=>a+(i.cost||0),0); }
+
+    function renderSummary(){
+      const p = progress();
+      $('#pval').textContent = p + '%';
+      $('#pval2').textContent = p + '%';
+      $('#pbar').style.width = p + '%';
+      $('#tval').textContent = brl(total());
+    }
+
+    function renderRoteiro(){
+      const el = $('#roteiro'); el.innerHTML='';
+      state.items.forEach(i=>{
+        const card = document.createElement('div');
+        card.className = 'card trip-card' + (i.done ? ' done-card' : '');
+        card.innerHTML = `
+          <div class="row">
+            <div class="left">
+              <div class="seq">${i.id}</div>
+              <div>
+                <div class="muted">${i.date} • ${i.city}</div>
+                <h3 style="margin:0">${i.activity}</h3>
+                <div class="muted">Estadia: ${i.stay} • Obs: ${i.notes}</div>
+                <div class="tags">${i.steps.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+                <ul class="substeps">
+                  ${i.substeps.map(s=>`<li>${s}</li>`).join('')}
+                </ul>
+              </div>
+            </div>
+            <button class="btn">${i.done ? 'Concluído' : 'Marcar'}</button>
+          </div>`;
+        card.querySelector('button').onclick = ()=>{ i.done=!i.done; save(); renderAll(); };
+        el.appendChild(card);
+      });
+    }
+
+    function renderFinanceiro(){
+      const el = $('#financeiro'); el.innerHTML='';
+      const totalBox = document.createElement('div'); totalBox.className='card simple';
+      totalBox.innerHTML = `<span>Total geral</span><strong>${brl(total())}</strong>`;
+      el.appendChild(totalBox);
+
+      state.items.filter(i=>i.cost!=null).forEach(i=>{
+        const row = document.createElement('div'); row.className='card simple';
+        row.innerHTML = `<div><h3 style="margin:0">Seq ${i.id} • ${i.activity}</h3><div class="muted">${i.stay}</div></div><strong>${brl(i.cost)}</strong>`;
+        el.appendChild(row);
+      });
+
+      const links = document.createElement('div');
+      links.className = 'card finance-links';
+      links.innerHTML = '<h3 style="margin-top:0">Links de reservas</h3>' + reservationLinks.map(l => `<a href="${l.url}" target="_blank" rel="noreferrer">${l.label}</a>`).join('');
+      el.appendChild(links);
+    }
+
+    function renderChecklist(){
+      const el = $('#checklist'); el.innerHTML='';
+      state.checklist.forEach(i=>{
+        const row = document.createElement('div'); row.className='card check';
+        row.innerHTML = `<input type="checkbox" ${i.done?'checked':''}/><span>${i.label}</span>`;
+        row.querySelector('input').onchange = ()=>{ i.done=!i.done; save(); };
+        el.appendChild(row);
+      });
+    }
+
+    function renderCompras(){
+      const el = $('#compras'); el.innerHTML='';
+      state.shopping.forEach(i=>{
+        const row = document.createElement('div'); row.className='card check';
+        row.innerHTML = `<input type="checkbox" ${i.done?'checked':''}/><span>${i.label}</span>`;
+        row.querySelector('input').onchange = ()=>{ i.done=!i.done; save(); };
+        el.appendChild(row);
+      });
+    }
+
+    function renderNotes(){ $('#notes').value = state.notes; }
+
+    function renderAll(){
+      renderSummary(); renderRoteiro(); renderFinanceiro(); renderChecklist(); renderCompras(); renderNotes();
+    }
+
+    $$('.tab').forEach(btn=>{
+      btn.onclick = ()=>{
+        $$('.tab').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        ['roteiro','financeiro','checklist','compras','notas'].forEach(id=>{
+          document.getElementById(id).style.display = (btn.dataset.tab===id)?'grid':'none';
+        });
+      };
+    });
+
+    $('#notes').addEventListener('input', e=>{ state.notes = e.target.value; save(); });
+
+    document.getElementById('exportBtn').addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'roteiro-eua-dados.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    let deferredPrompt = null;
+    const installBtn = document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'inline-block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      installBtn.style.display = 'none';
+    });
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
